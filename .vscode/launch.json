@@ -8,8 +8,8 @@
       "args": [],
       "stopAtEntry": false,
       "externalConsole": true,
-      "cwd": "c:/Users/LENOVO/Documents/GitHub/image_processing",
-      "program": "c:/Users/LENOVO/Documents/GitHub/image_processing/build/Debug/outDebug",
+      "cwd": "c:/Users/LENOVO/Documents/GitHub/image_processing/image_processing",
+      "program": "c:/Users/LENOVO/Documents/GitHub/image_processing/image_processing/build/Debug/outDebug",
       "MIMode": "gdb",
       "miDebuggerPath": "gdb",
       "setupCommands": [

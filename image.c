@@ -16,6 +16,7 @@ RGB_img initialize_values(int L,int H,int R)
     }
     return image;
 }
+
 void initialize_rand(RGB_img image)
 {
     int i,j,k;
@@ -25,7 +26,7 @@ void initialize_rand(RGB_img image)
         {
             for(k=0;k<image.R*(image.L-1);k++)
             {
-                image.img[i][j][k]=1;
+                image.img[i][j][k]=rand()%255;
             }
         }
     }
@@ -44,15 +45,26 @@ void Display_values(RGB_img image)
     }
 }
 
-void get_values(RGB_img image)
+RGB_img get_values()
 {
-    int i,j,k;
+    int i, j, k, L, H, R;
+    RGB_img image;
+    printf("\nR:");
+    scanf("%d", &R);
+    printf("\nL:");
+    scanf("%d", &L);
+    printf("\nH:");
+    scanf("%d", &H);
+
+    image = initialize_values(L, H, R);
+
     printf("\n\n values :\n");
+
     for(i=0;i<3;i++)
     {
-        for(j=0;j<image.R*(image.H-1);j++)
+        for(j=0;j<R*(H-1);j++)
         {
-            for(k=0;k<image.R*(image.L-1);k++)
+            for(k=0;k<R*(L-1);k++)
             {
                 printf("img[%d][%d][%d] :",i,j,k);
                 scanf("%d",&image.img[i][j][k]);
@@ -65,6 +77,8 @@ void get_values(RGB_img image)
 
 RGB_img initializeMatrixFromFile(const char *filename) {
     RGB_img image;
+    int L,H,R;
+    printf("\n%s \n",filename);
 
     FILE *file = fopen(filename, "r"); // Open the file in read mode
     if (file == NULL) {
@@ -73,25 +87,18 @@ RGB_img initializeMatrixFromFile(const char *filename) {
     }
 
     // Read L, H, R values from the file
-    fscanf(file, "%d %d %d", &image.L, &image.H, &image.R);
-
+    fscanf(file, "%d %d %d", &L, &H, &R);
+    
     // Allocate memory for the matrix
+    image= initialize_values(L,H,R);
+
+
     int i, j;
     for (i = 0; i < 3; i++) {
-        image.img[i] = (unsigned char **)malloc(image.L * sizeof(unsigned char *));
-        if (image.img[i] == NULL) {
-            fprintf(stderr, "Memory allocation failed\n");
-            exit(EXIT_FAILURE);
-        }
-        for (j = 0; j < image.L; j++) {
-            image.img[i][j] = (unsigned char *)malloc(image.H * sizeof(unsigned char));
-            if (image.img[i][j] == NULL) {
-                fprintf(stderr, "Memory allocation failed\n");
-                exit(EXIT_FAILURE);
-            }
+        for (j = 0; j < R*(H-1); j++) {
             // Read pixel values from the file
-            for (int k = 0; k < image.H; k++) {
-                fscanf(file, "%hhu", &image.img[i][j][k]);
+            for (int k = 0; k < R*(L-1) ; k++) {
+                fscanf(file, "%d", &image.img[i][j][k]);
             }
         }
     }
@@ -99,6 +106,32 @@ RGB_img initializeMatrixFromFile(const char *filename) {
     fclose(file); // Close the file
 
     return image;
+}
+
+void ImageToFile(RGB_img image,char *FileName)
+{
+    FILE *File;
+    int i,j,k;
+    File = fopen(FileName,"w");
+    if(File==NULL)
+    {
+        fprintf(stderr,"error opening file %s\n",FileName);
+        exit(EXIT_FAILURE);
+    }
+    fprintf(File,"\n %d  %d  %d\n",image.L, image.H, image.R);
+    for(i=0;i<3;i++)
+    {
+        for( j = 0; j < image.R * (image.H - 1); j++)
+        {
+            for(k = 0; k < image.R * (image.H - 1); k++)
+            {
+                fprintf(File, " %d", image.img[i][j][k]);
+            }
+            fprintf(File, "%c", '\n');
+        }
+        fprintf(File, "%c", '\n');
+    }
+    fclose(File);
 }
 
 void extractComponentToGrayscale(RGB_img originalImage, int componentIndex) {
@@ -137,9 +170,7 @@ void extractComponentToGrayscale(RGB_img originalImage, int componentIndex) {
     free(grayscaleImg);
 }
 
-
-// Function to perform convolution on the image and return a new image
-RGB_img applyfilter(RGB_img *image,int **kernel ,int KERNEL_SIZE) {
+RGB_img applyfilter(RGB_img *image,int kernel[3][3] ,int KERNEL_SIZE) {
     int i, j, k, l, m;
     int R = image->R, H = image->H, L = image->L;
     unsigned char sum;
