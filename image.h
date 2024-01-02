@@ -29,3 +29,11 @@ void displayImage2(RGB_img image);
 RGB_img applyfilter(RGB_img *image,int kernel[3][3] ,int KERNEL_SIZE) ;
 
 void ImageToFile(RGB_img image,char *FileName);
+
+void setKernel(int Kernel[3][3], int Choice);
+
+int fileExists(const char *fileName);
+
+void freeRGBImage(RGB_img *image);
+
+RGB_img convertToGrayscale(RGB_img originalImage);

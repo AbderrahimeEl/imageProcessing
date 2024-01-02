@@ -4,20 +4,19 @@
 
 int main(void){
    int Choice;
+
 printf("\n saisir \n1 to get a image from a text file ");
 printf("\n2 to saisir  an  image  ");
 printf("\n3 to get a random image ");
-scanf("%d",&Choice);
+printf("\n\tChoice: ");
+scanf("%d", &Choice);
 
 int L = 5, H = 5, R = 1, i, j;
 RGB_img image = initialize_values(L, H, R);
+RGB_img Newimage;
 
 char FileName[30];
-int kernel[3][3] = {
-   {0,1,0},
-   {1,1,1},
-   {0,1,0},
-};
+int Kernel[3][3] ;
 switch (Choice)
 {
 case 1:
@@ -47,12 +46,55 @@ case 3:
 default:
    break;
 }
+printf("\n enter \n1 to to apply a filter to the image  ");
+printf("\n2 o extract graystyle image");
+printf("\n\tChoice: ");
+scanf("%d", &Choice);
+if(Choice == 1 || Choice ==2){
+if(Choice ==1 )
+{
 
-printf("\nwhat filter you want to aply to the image  :\n");
-printf("enter 1 for blur \n");
+    printf("\nWhat filter do you want to apply to the image?\n");
+    printf("Enter 1 for Identity Filter\n");
+    printf("Enter 2 for Gaussian Blur\n");
+    printf("Enter 3 for Sobel Horizontal\n");
+    printf("Enter 4 for Sobel Vertical\n");
+    printf("Enter 5 for Sharpening Filter\n");
+    printf("Enter 6 for Emboss Filter\n");
+    printf("Enter 7 for Box Blur (Average)\n");
+    printf("\n\tChoice: ");
+    scanf("%d", &Choice);
+
+    setKernel(Kernel, Choice);
+    Newimage = applyfilter(&image, Kernel, 3);
+}
+if(Choice == 2)
+
+Newimage = convertToGrayscale(image);
+
+    
+printf("original image  :");
+
 Display_values(image);
-RGB_img ImgWithFilter = applyfilter(&image, kernel, 3);
-Display_values(ImgWithFilter);
+
+printf("\n\n\tnew image : ");
+
+Display_values(Newimage);
+
+printf("\n\tenter the name of the file to save the new image ");
+fflush(stdin);
+gets(FileName);
+ImageToFile(Newimage,FileName);
+if(fileExists(FileName))
+printf("\nDone image is enregstred in %s",FileName);
+else 
+printf("\nError");
+freeRGBImage(&Newimage);
+}
+else{
+printf("\nError");
+freeRGBImage(&image);
+}
 
 return 0;
 }
